@@ -1,24 +1,23 @@
-node {
-    stage('clone.git.repo') {
-        sh "rm-rf terrsformsingleinstance"
-        sh "git clone -b devops15terraform https://github.com/mavrick202/terraformsingleinstance.git"
-        sh "ls -al"
-    }
-    stage('Perform Packer Build') {
-        dir('terraformsingleinstance') {
-            sh "pwd"
-            sh "packer build -var aws_secret_key=hzykGXJD1/8v8VX7NSGO09KLKXBpB9fC2njYzgHp -var aws_access_key=AKIAY2SDLB2FPJOC7VHT -var-file packer-vars.json packer.json | tee ouput.txt"
-            sh "tail -2 output.txt | head -2 |awk 'match(\$0, /ami-.*){print substr(\$0, RSTART, RLENGTH) }' > ami.txt"
-            sh "echo \$(cat ami.txt) > ami.txt";
-            def AMIID=readFile('ami.txt').trim()
-            sh "echo variable \\\"imagename\\\" { default = \\\"$AMIID\\\" } >> variables.tf"
+pipeline {
+    agent any
+
+    stages {
+        stage("Build") {
+            steps {
+                echo "Some code compilation here..."
+            }
         }
-    }
-    stage('Terraform Apply') {
-        dir("terraformsingleinstance") {
-            sh "terraform init"
-            sh "terraform plan"
-            sh "terraform apply --auto-approve"
+        stage("Deploy") {
+            steps {
+                echo "Some code compilation here..."
+            }
+        }
+
+        stage("Test") {
+            steps {
+                echo "Some tests execution here..."
+                echo 1
+            }
         }
     }
 }
